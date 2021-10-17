@@ -225,6 +225,9 @@ static void object_add_task(lv_obj_t* obj, uint8_t pageid, uint8_t objid, lv_tas
  */
 void hasp_new_object(const JsonObject& config, uint8_t& saved_page_id)
 {
+    /* Skip line detection */
+    if(!config[FPSTR(FP_SKIP)].isNull() && config[FPSTR(FP_SKIP)].as<bool>()) return;
+
     /* Page selection */
     uint8_t pageid = saved_page_id;
     if(!config[FPSTR(FP_PAGE)].isNull()) {
@@ -343,6 +346,16 @@ void hasp_new_object(const JsonObject& config, uint8_t& saved_page_id)
                 }
                 break;
 
+            case LV_HASP_TEXTAREA:
+            case HASP_OBJ_TEXTAREA:
+                obj = lv_textarea_create(parent_obj, NULL);
+                if(obj) {
+                    lv_obj_set_event_cb(obj, textarea_event_handler);
+                    lv_textarea_set_cursor_click_pos(obj, true);
+                    obj->user_data.objid = LV_HASP_TEXTAREA;
+                }
+                break;
+
             case LV_HASP_IMAGE:
             case HASP_OBJ_IMG:
                 obj = lv_img_create(parent_obj, NULL);
@@ -380,12 +393,14 @@ void hasp_new_object(const JsonObject& config, uint8_t& saved_page_id)
                 }
                 break;
 
+#if LVGL_VERSION_MAJOR == 7 && LV_USE_PAGE
             case LV_HASP_PAGE:
             case HASP_OBJ_PAGE:
                 obj = lv_page_create(parent_obj, NULL);
                 if(obj) obj->user_data.objid = LV_HASP_PAGE;
                 // No event handler for pages
                 break;
+#endif
 
 #if LV_USE_WIN && LVGL_VERSION_MAJOR == 7
             case LV_HASP_WINDOW:
@@ -626,10 +641,15 @@ void hasp_new_object(const JsonObject& config, uint8_t& saved_page_id)
             case HASP_OBJ_MSGBOX:
                 obj = lv_msgbox_create(parent_obj, NULL);
                 if(obj) {
+                    /* Assign default OK btnmap and enable recolor */
+                    if(msgbox_default_map) lv_msgbox_add_btns(obj, msgbox_default_map);
+                    lv_msgbox_ext_t* ext = (lv_msgbox_ext_t*)lv_obj_get_ext_attr(obj);
+                    if(ext && ext->btnm) lv_btnmatrix_set_recolor(ext->btnm, true);
+
+                    /* msgbox parameters */
                     lv_obj_align(obj, NULL, LV_ALIGN_CENTER, 0, 0);
                     lv_obj_set_auto_realign(obj, true);
                     lv_obj_set_event_cb(obj, msgbox_event_handler);
-                    if(msgbox_default_map) lv_msgbox_add_btns(obj, msgbox_default_map);
                     obj->user_data.objid = LV_HASP_MSGBOX;
                 }
                 break;

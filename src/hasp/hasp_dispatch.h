@@ -73,6 +73,7 @@ void dispatch_statusupdate(const char*, const char*, uint8_t source);
 void dispatch_send_discovery(const char*, const char*, uint8_t source);
 void dispatch_idle(const char*, const char*, uint8_t source);
 void dispatch_calibrate(const char*, const char*, uint8_t source);
+void dispatch_antiburn(const char*, const char* payload, uint8_t source);
 void dispatch_wakeup(const char*, const char*, uint8_t source);
 void dispatch_exec(const char*, const char* payload, uint8_t source);
 void dispatch_config(const char* topic, const char* payload, uint8_t source);
@@ -83,6 +84,7 @@ void dispatch_state_subtopic(const char* subtopic, const char* payload);
 void dispatch_state_eventid(const char* topic, hasp_event_t eventid);
 void dispatch_state_brightness(const char* topic, hasp_event_t eventid, int32_t val);
 void dispatch_state_val(const char* topic, hasp_event_t eventid, int32_t val);
+void dispatch_state_antiburn(hasp_event_t eventid);
 
 /* ===== Getter and Setter Functions ===== */
 
