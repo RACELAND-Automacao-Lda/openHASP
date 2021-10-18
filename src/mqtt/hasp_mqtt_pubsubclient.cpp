@@ -99,13 +99,12 @@ bool mqtt_send_lwt(bool online)
 {
     char tmp_payload[8];
     char tmp_topic[strlen(mqttNodeTopic) + 4];
+
     strncpy(tmp_topic, mqttNodeTopic, sizeof(tmp_topic));
     strncat_P(tmp_topic, PSTR(MQTT_TOPIC_LWT), sizeof(tmp_topic));
-    // snprintf_P(tmp_topic, sizeof(tmp_topic), PSTR("%s" MQTT_TOPIC_LWT), mqttNodeTopic);
 
     size_t len = snprintf_P(tmp_payload, sizeof(tmp_payload), online ? PSTR("online") : PSTR("offline"));
     bool res   = mqttPublish(tmp_topic, tmp_payload, len, true);
-
     return res;
 }
 
@@ -171,7 +170,7 @@ static void mqtt_message_cb(char* topic, byte* payload, unsigned int length)
     } else if(topic == strstr_P(topic, PSTR("homeassistant/status"))) { // HA discovery topic
         if(mqttHAautodiscover && !strcasecmp_P((char*)payload, PSTR("online"))) {
             mqtt_ha_register_auto_discovery(); // auto-discovery first
-            dispatch_current_state();          // send the data
+            dispatch_current_state(TAG_MQTT);  // send the data
         }
         return;
 #endif
@@ -314,8 +313,13 @@ void mqttStart()
 
     /* Home Assistant auto-configuration */
 #ifdef HASP_USE_HA
-    if(mqttHAautodiscover) mqttSubscribeTo(F("hass/status"), mqttClientId);
-    if(mqttHAautodiscover) mqttSubscribeTo(F("homeassistant/status"), mqttClientId);
+    if(mqttHAautodiscover) {
+        char topic[64];
+        snprintf_P(topic, sizeof(topic), PSTR("hass/status"));
+        mqttSubscribeTo(topic);
+        snprintf_P(topic, sizeof(topic), PSTR("homeassistant/status"));
+        mqttSubscribeTo(topic);
+    }
 #endif
 
     // Force any subscribed clients to toggle offline/online when we first connect to
