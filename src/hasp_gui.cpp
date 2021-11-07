@@ -68,6 +68,7 @@ gui_conf_t gui_settings = {.show_pointer   = false,
                            .rotation       = TFT_ROTATION,
                            .invert_display = INVERT_COLORS,
                            .cal_data       = {0, 65535, 0, 65535, 0}};
+lv_obj_t* cursor;
 
 uint16_t tft_width  = TFT_WIDTH;
 uint16_t tft_height = TFT_HEIGHT;
@@ -86,15 +87,20 @@ uint16_t tft_height = TFT_HEIGHT;
 //     lv_tick_inc(LVGL_TICK_PERIOD);
 // }
 
+void gui_hide_pointer(bool hidden)
+{
+    if(cursor) lv_obj_set_hidden(cursor, hidden || !gui_settings.show_pointer);
+}
+
 IRAM_ATTR void gui_flush_cb(lv_disp_drv_t* disp, const lv_area_t* area, lv_color_t* color_p)
 {
     haspTft.flush_pixels(disp, area, color_p);
 }
 
-// IRAM_ATTR bool touch_read(lv_indev_drv_t* indev_driver, lv_indev_data_t* data)
-// {
-//     return haspTouch.read(indev_driver, data);
-// }
+IRAM_ATTR bool gui_touch_read(lv_indev_drv_t* indev_driver, lv_indev_data_t* data)
+{
+    return haspTouch.read(indev_driver, data);
+}
 
 void guiCalibrate(void)
 {
@@ -196,8 +202,7 @@ void guiSetup()
                 PSTR(LVGL_VERSION_INFO));
 
     /* Initialize the LVGL display driver with correct orientation */
-#if TOUCH_DRIVER == 2046
-
+#if(TOUCH_DRIVER == 2046) || defined(LGFX_USE_V1) // Use native display driver to rotate display and touch
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.buffer   = &disp_buf;
@@ -214,22 +219,22 @@ void guiSetup()
     lv_disp_t* display = lv_disp_drv_register(&disp_drv);
     lv_disp_set_rotation(display, LV_DISP_ROT_NONE);
 
-#elif defined(LANBONL8)
+    /*
+    #elif defined(LANBONL8) // Screen is 0 deg. rotated
+        static lv_disp_drv_t disp_drv;
+        lv_disp_drv_init(&disp_drv);
+        disp_drv.buffer   = &disp_buf;
+        disp_drv.flush_cb = gui_flush_cb;
 
-    static lv_disp_drv_t disp_drv;
-    lv_disp_drv_init(&disp_drv);
-    disp_drv.buffer   = &disp_buf;
-    disp_drv.flush_cb = gui_flush_cb;
+        disp_drv.hor_res = tft_width;
+        disp_drv.ver_res = tft_height;
 
-    disp_drv.hor_res = tft_width;
-    disp_drv.ver_res = tft_height;
+        lv_disp_rot_t rotation[] = {LV_DISP_ROT_NONE, LV_DISP_ROT_270, LV_DISP_ROT_180, LV_DISP_ROT_90};
+        lv_disp_t* display       = lv_disp_drv_register(&disp_drv);
+        lv_disp_set_rotation(display, rotation[(4 + gui_settings.rotation - TFT_ROTATION) % 4]);
+    */
 
-    lv_disp_rot_t rotation[] = {LV_DISP_ROT_NONE, LV_DISP_ROT_270, LV_DISP_ROT_180, LV_DISP_ROT_90};
-    lv_disp_t* display       = lv_disp_drv_register(&disp_drv);
-    lv_disp_set_rotation(display, rotation[(4 + gui_settings.rotation - TFT_ROTATION) % 4]);
-
-#elif defined(M5STACK)
-
+#elif defined(M5STACK) // Screen is 90 deg. rotated
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.buffer   = &disp_buf;
@@ -242,8 +247,7 @@ void guiSetup()
     lv_disp_t* display       = lv_disp_drv_register(&disp_drv);
     lv_disp_set_rotation(display, rotation[(4 + gui_settings.rotation - TFT_ROTATION) % 4]);
 
-#else
-
+#else // Use lvgl transformations
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.buffer   = &disp_buf;
@@ -326,34 +330,28 @@ void guiSetup()
 #if defined(WINDOWS) || defined(POSIX)
     indev_drv.read_cb = mouse_read;
 #else
-    indev_drv.read_cb = touch_read;
+    indev_drv.read_cb = gui_touch_read;
 #endif
     lv_indev_t* mouse_indev  = lv_indev_drv_register(&indev_drv);
     mouse_indev->driver.type = LV_INDEV_TYPE_POINTER;
 
     /*Set a cursor for the mouse*/
-    if(gui_settings.show_pointer) {
-        // lv_obj_t * label = lv_label_create(lv_layer_sys(), NULL);
-        // lv_label_set_text(label, "<");
-        // lv_indev_set_cursor(mouse_indev, label); // connect the object to the driver
-
-        LOG_TRACE(TAG_GUI, F("Initialize Cursor"));
-        lv_obj_t* cursor;
-        lv_obj_t* mouse_layer = lv_disp_get_layer_sys(NULL); // default display
+    LOG_TRACE(TAG_GUI, F("Initialize Cursor"));
+    lv_obj_t* mouse_layer = lv_disp_get_layer_sys(NULL); // default display
 
 #if defined(ARDUINO_ARCH_ESP32)
-        LV_IMG_DECLARE(mouse_cursor_icon);          /*Declare the image file.*/
-        cursor = lv_img_create(mouse_layer, NULL);  /*Create an image object for the cursor */
-        lv_img_set_src(cursor, &mouse_cursor_icon); /*Set the image source*/
+    LV_IMG_DECLARE(mouse_cursor_icon);          /*Declare the image file.*/
+    cursor = lv_img_create(mouse_layer, NULL);  /*Create an image object for the cursor */
+    lv_img_set_src(cursor, &mouse_cursor_icon); /*Set the image source*/
 #else
-        cursor = lv_obj_create(mouse_layer, NULL); // show cursor object on every page
-        lv_obj_set_size(cursor, 9, 9);
-        lv_obj_set_style_local_radius(cursor, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
-        lv_obj_set_style_local_bg_color(cursor, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
-        lv_obj_set_style_local_bg_opa(cursor, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_COVER);
+    cursor            = lv_obj_create(mouse_layer, NULL); // show cursor object on every page
+    lv_obj_set_size(cursor, 9, 9);
+    lv_obj_set_style_local_radius(cursor, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_RADIUS_CIRCLE);
+    lv_obj_set_style_local_bg_color(cursor, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+    lv_obj_set_style_local_bg_opa(cursor, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_COVER);
 #endif
-        lv_indev_set_cursor(mouse_indev, cursor); /*Connect the image  object to the driver*/
-    }
+    gui_hide_pointer(false);
+    lv_indev_set_cursor(mouse_indev, cursor); /*Connect the image  object to the driver*/
 
 #if !(defined(WINDOWS) || defined(POSIX))
     // drv_touch_init(gui_settings.rotation); // Touch driver
@@ -519,6 +517,7 @@ bool guiSetConfig(const JsonObject& settings)
         changed |= gui_settings.show_pointer != settings[FPSTR(FP_GUI_POINTER)].as<bool>();
 
         gui_settings.show_pointer = settings[FPSTR(FP_GUI_POINTER)].as<bool>();
+        gui_hide_pointer(false);
     }
 
     if(!settings[FPSTR(FP_GUI_CALIBRATION)].isNull()) {

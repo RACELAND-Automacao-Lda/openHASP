@@ -5,7 +5,7 @@
 #define HASP_STMPE610_TOUCH_DRIVER_H
 
 #ifdef ARDUINO
-#include "Arduino.h"
+#include <Arduino.h>
 #include <SPI.h>
 #include "Adafruit_STMPE610.h"
 #include "ArduinoLog.h"

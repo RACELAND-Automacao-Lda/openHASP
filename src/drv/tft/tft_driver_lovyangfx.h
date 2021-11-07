@@ -5,7 +5,7 @@
 #define HASP_LOVYANGFX_DRIVER_H
 
 #if defined(ARDUINO) && defined(LGFX_USE_V1)
-#include "Arduino.h"
+#include <Arduino.h>
 
 #include "lvgl.h"
 #include "LovyanGFX.hpp"
@@ -21,6 +21,10 @@
 #include "custom/bootlogo_template.h" // Sketch tab header for xbm images
 #endif
 
+#ifndef TOUCH_IRQ
+#define TOUCH_IRQ -1
+#endif
+
 namespace dev {
 class LGFX : public lgfx::LGFX_Device {
   public:
@@ -28,7 +32,7 @@ class LGFX : public lgfx::LGFX_Device {
     lgfx::Panel_LCD* _panel_instance;
     lgfx::IBus* _bus_instance; // SPIバスのインスタンス
     lgfx::Light_PWM _light_instance;
-    lgfx::Touch_XPT2046 _touch_instance;
+    lgfx::ITouch* _touch_instance;
 
     LGFX(void)
     {

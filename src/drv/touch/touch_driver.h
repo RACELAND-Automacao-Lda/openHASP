@@ -5,7 +5,7 @@
 #define HASP_BASE_TOUCH_DRIVER_H
 
 #ifdef ARDUINO
-#include "Arduino.h"
+#include <Arduino.h>
 #endif
 
 #include "hasplib.h"
@@ -27,6 +27,7 @@ class BaseTouch {
     {}
     IRAM_ATTR bool read(lv_indev_drv_t* indev_driver, lv_indev_data_t* data)
     {
+        data->state = LV_INDEV_STATE_REL;
         return false;
     }
     void calibrate(uint16_t* calData)
@@ -47,7 +48,10 @@ class BaseTouch {
 #define TOUCH_DRIVER -1 // No Touch
 #endif
 
-#if TOUCH_DRIVER == 2046 && defined(USER_SETUP_LOADED)
+#if defined(LGFX_USE_V1)
+#warning Building for LovyanGfx Touch
+#include "touch_driver_lovyangfx.h"
+#elif TOUCH_DRIVER == 2046 && defined(USER_SETUP_LOADED)
 #warning Building for XPT2046
 //#include "touch_driver_xpt2046.h"
 #include "touch_driver_tftespi.h"
@@ -70,11 +74,11 @@ class BaseTouch {
 #warning Building for Generic Touch
 using dev::BaseTouch;
 extern dev::BaseTouch haspTouch;
-IRAM_ATTR bool touch_read(lv_indev_drv_t* indev_driver, lv_indev_data_t* data)
-{
-    data->state = LV_INDEV_STATE_REL;
-    return false;
-}
+// IRAM_ATTR bool touch_read(lv_indev_drv_t* indev_driver, lv_indev_data_t* data)
+// {
+//     data->state = LV_INDEV_STATE_REL;
+//     return false;
+// }
 #endif
 
 #endif

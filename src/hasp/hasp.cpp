@@ -4,6 +4,7 @@
 #include "hasplib.h"
 #include "dev/device.h"
 // #include "lv_datetime.h"
+#include "hasp_gui.h"
 
 #ifdef ARDUINO
 #include "ArduinoLog.h"
@@ -25,7 +26,6 @@
 
 #if HASP_USE_CONFIG > 0
 #include "lv_fs_if.h"
-#include "hasp_gui.h"
 #include "hasp_config.h"
 #include "font/hasp_font_loader.h"
 //#include "hasp_filesystem.h" included in hasp_conf.h
@@ -111,16 +111,19 @@ HASP_ATTRIBUTE_FAST_MEM void hasp_update_sleep_state()
     if(sleepTimeLong > 0 && idle >= (sleepTimeShort + sleepTimeLong)) {
         if(hasp_sleep_state != HASP_SLEEP_LONG) {
             hasp_sleep_state = HASP_SLEEP_LONG;
+            gui_hide_pointer(true);
             dispatch_idle(NULL, NULL, TAG_HASP);
         }
     } else if(sleepTimeShort > 0 && idle >= sleepTimeShort) {
         if(hasp_sleep_state != HASP_SLEEP_SHORT) {
             hasp_sleep_state = HASP_SLEEP_SHORT;
+            gui_hide_pointer(true);
             dispatch_idle(NULL, NULL, TAG_HASP);
         }
     } else {
         if(hasp_sleep_state != HASP_SLEEP_OFF) {
             hasp_sleep_state = HASP_SLEEP_OFF;
+            gui_hide_pointer(false);
             dispatch_idle(NULL, NULL, TAG_HASP);
         }
     }
@@ -157,6 +160,7 @@ void hasp_stop_antiburn(lv_obj_t* layer)
     antiburn_task = NULL;
     lv_obj_set_style_local_bg_opa(layer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_TRANSP);
     hasp_set_wakeup_touch(haspDevice.get_backlight_power() == false); // enabled if backlight is OFF
+    gui_hide_pointer(false);
     dispatch_state_antiburn(HASP_EVENT_OFF);
 }
 
@@ -188,6 +192,7 @@ void hasp_set_antiburn(int32_t repeat_count, uint32_t period)
             lv_obj_set_click(layer, true);
             lv_task_set_repeat_count(antiburn_task, repeat_count);
             lv_task_set_period(antiburn_task, period);
+            gui_hide_pointer(true);
             dispatch_state_antiburn(HASP_EVENT_ON);
         } else {
             LOG_INFO(TAG_HASP, F("Antiburn %s"), D_INFO_FAILED);
@@ -203,9 +208,9 @@ void hasp_set_antiburn(int32_t repeat_count, uint32_t period)
 /**
  * Check if Anti Burn-in protection is enabled
  */
-bool hasp_get_antiburn()
+hasp_event_t hasp_get_antiburn()
 {
-    return antiburn_task != NULL;
+    return (antiburn_task != NULL) ? HASP_EVENT_ON : HASP_EVENT_OFF;
 }
 
 /**
