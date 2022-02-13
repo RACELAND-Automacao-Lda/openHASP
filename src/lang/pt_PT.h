@@ -147,11 +147,13 @@
 #define D_HTTP_MAIN_MENU "Menu Principal"
 #define D_HTTP_REBOOT "Reiniciar"
 #define D_HTTP_CONFIGURATION "Configuração"
+#define D_HTTP_CONFIG_CHANGED "Configuration has changed, please click <a href='/reboot'>Restart</a> to save changes to flash." // New
 #define D_HTTP_SENDING_PAGE "Foi enviado página %S a %s"
 #define D_HTTP_FOOTER "por Francis Van Roie"
 
 #define D_INFO_VERSION "Versão"
 #define D_INFO_BUILD_DATETIME "Compilado a"
+#define D_INFO_ENVIRONMENT "Environment" // new
 #define D_INFO_UPTIME "Tempo ativo"
 #define D_INFO_FREE_HEAP "Heap livre"
 #define D_INFO_FREE_BLOCK "Blocos livres"

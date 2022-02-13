@@ -76,19 +76,39 @@ typedef int16_t lv_coord_t;
  /* LittelvGL's internal memory manager's settings.
   * The graphical objects and other related data are stored here. */
 
+//#define LV_FS_SEEK(x, y) lv_fs_seek(x, y, LV_FS_SEEK_SET)
+#define LV_FS_SEEK(x, y) lv_fs_seek(x, y)
+#define _lv_img_decoder_t _lv_img_decoder
+
   /* 1: use custom malloc/free, 0: use the built-in `lv_mem_alloc` and `lv_mem_free` */
 #define LV_MEM_CUSTOM      0
 #if LV_MEM_CUSTOM == 0
 /* Size of the memory used by `lv_mem_alloc` in bytes (>= 2kB)*/
 
 #ifndef LV_MEM_SIZE
-
 #if defined(ARDUINO_ARCH_ESP8266)
-#  define LV_MEM_SIZE    (10 * 1024U) // Minimum 10 Kb
-#else
+#  define LV_MEM_SIZE    (12 * 1024U) // Minimum 12 Kb
+#elif defined(ESP32S2)
 #  define LV_MEM_SIZE    (20 * 1024U)  // 20Kb is much better
+#elif defined(ARDUINO_ARCH_ESP32)
+#  define LV_MEM_SIZE    (48 * 1024U)  // 48Kb is much better
+#else
+#  define LV_MEM_SIZE    (256 * 1024U) // native app
 #endif
+#endif // LV_MEM_SIZE
+
+#ifndef LV_VDB_SIZE
+#if defined(ARDUINO_ARCH_ESP8266)
+#  define LV_VDB_SIZE    (8 * 1024U)   // Minimum 8 Kb
+#elif defined(ESP32S2)
+#  define LV_VDB_SIZE    (16 * 1024U)  // 16kB draw buffer
+#elif defined(ARDUINO_ARCH_ESP32)
+#  define LV_VDB_SIZE    (32 * 1024U)  // 32kB draw buffer
+#else
+#  define LV_VDB_SIZE    (128 * 1024U) // native app
 #endif
+#endif // LV_VDB_SIZE
+
 
 /* Complier prefix for a big array declaration */
 #  define LV_MEM_ATTR
@@ -199,6 +219,7 @@ typedef void* lv_fs_drv_user_data_t;
 //#  define LV_FS_IF_SPIFFS   '\0'  // no internal esp Flash
 #endif
 #endif  /*LV_USE_FS_IF*/
+#define LV_FS_PC_PATH "/littlefs"
 
 #endif
 
@@ -348,7 +369,7 @@ typedef void* lv_indev_drv_user_data_t;            /*Type of user data in the in
  *    FONT USAGE
  *===================*/
 
-#if TFT_WIDTH>=320 || TFT_WIDTH>=480
+#if TFT_HEIGHT>=480 || TFT_WIDTH>=480
 
 #ifndef HASP_FONT_1
 #define HASP_FONT_1 robotocondensed_regular_16_latin1  /* 5% Width */
@@ -650,6 +671,7 @@ typedef struct {
   uint8_t actionid:4;
   uint8_t groupid:4;
   uint8_t swipeid:4;
+  void* tag;
 } lv_obj_user_data_t;
 
 /*1: enable `lv_obj_realaign()` based on `lv_obj_align()` parameters*/

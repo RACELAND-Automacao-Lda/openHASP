@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include <time.h>
@@ -242,8 +242,8 @@ static void dispatch_output(const char* topic, const char* payload)
             JsonVariant brightness = json[F("brightness")];
 
             // Check if the state needs to change
-            if(!state.isNull() && power_state != state.as<bool>()) {
-                power_state = state.as<bool>();
+            if(!state.isNull() && power_state != Parser::is_true(state)) {
+                power_state = Parser::is_true(state);
                 updated     = true;
             }
 
@@ -257,7 +257,7 @@ static void dispatch_output(const char* topic, const char* payload)
 
             // Set new state
             if(updated && gpio_set_pin_state(pin, power_state, state_value)) {
-                return; // value was set and state output already
+                return; // value was set and state output already in gpio_set_pin_state
             } else {
                 // output the new state to the log
             }
@@ -849,9 +849,8 @@ void dispatch_moodlight(const char* topic, const char* payload, uint8_t source)
         if(jsonError) { // Couldn't parse incoming JSON command
             dispatch_json_error(TAG_MSGR, jsonError);
         } else {
-
-            if(!json[F("state")].isNull())
-                moodlight.power = Parser::is_true(json[F("state")].as<std::string>().c_str());
+            JsonVariant state = json[F("state")];
+            if(!state.isNull()) moodlight.power = Parser::is_true(state);
 
             if(!json["r"].isNull()) moodlight.rgbww[0] = json["r"].as<uint8_t>();
             if(!json["g"].isNull()) moodlight.rgbww[1] = json["g"].as<uint8_t>();
@@ -924,9 +923,11 @@ void dispatch_backlight(const char*, const char* payload, uint8_t source)
                 power = json.as<bool>();
 
             } else {
-                if(!json[F("state")].isNull()) power = Parser::is_true(json[F("state")].as<std::string>().c_str());
+                JsonVariant state      = json[F("state")];
+                JsonVariant brightness = json[F("brightness")];
 
-                if(!json[F("brightness")].isNull()) haspDevice.set_backlight_level(json[F("brightness")].as<uint8_t>());
+                if(!state.isNull()) power = Parser::is_true(state);
+                if(!brightness.isNull()) haspDevice.set_backlight_level(brightness.as<uint8_t>());
             }
         }
     }
@@ -978,7 +979,7 @@ void dispatch_antiburn(const char*, const char* payload, uint8_t source)
 
         } else { // other text
             JsonVariant key = json[F("state")];
-            if(!key.isNull()) state = Parser::is_true(key.as<std::string>().c_str());
+            if(!key.isNull()) state = Parser::is_true(key);
         }
     }
 
@@ -1152,8 +1153,8 @@ void dispatch_statusupdate(const char*, const char*, uint8_t source)
         network_get_statusupdate(buffer, sizeof(buffer));
         strcat(data, buffer);
 
-        snprintf_P(buffer, sizeof(buffer), PSTR("\"mac\":\"%s\","), halGetMacAddress(0, ":").c_str());
-        strcat(data, buffer);
+        // snprintf_P(buffer, sizeof(buffer), PSTR("\"mac\":\"%s\","), halGetMacAddress(0, ":").c_str());
+        // strcat(data, buffer);
 #endif
 
         snprintf_P(buffer, sizeof(buffer), PSTR("\"heapFree\":%u,\"heapFrag\":%u,\"core\":\"%s\","),
@@ -1170,7 +1171,7 @@ void dispatch_statusupdate(const char*, const char*, uint8_t source)
         // #endif
 
         snprintf_P(buffer, sizeof(buffer), PSTR("\"tftDriver\":\"%s\",\"tftWidth\":%u,\"tftHeight\":%u}"),
-                   haspTft.get_tft_model(), (TFT_WIDTH), (TFT_HEIGHT));
+                   haspTft.get_tft_model(), haspTft.width(), haspTft.height());
         strcat(data, buffer);
     }
 
@@ -1276,6 +1277,14 @@ void dispatch_service(const char*, const char* payload, uint8_t source)
         telnetStart();
     } else if(!strcmp_P(payload, "stop telnet")) {
         telnetStop();
+    }
+#endif
+
+#if HASP_USE_FTP > 0
+    if(!strcmp_P(payload, "start ftp")) {
+        ftpStart();
+    } else if(!strcmp_P(payload, "stop ftp")) {
+        ftpStop();
     }
 #endif
 

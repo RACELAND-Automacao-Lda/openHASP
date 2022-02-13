@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasplib.h"
@@ -384,13 +384,14 @@ void hasp_set_theme(uint8_t themeid)
     if(themeid < 0 || themeid > 5) return; // check bounds
 
 #if(LV_USE_THEME_HASP == 1)
-    uint32_t hasp_flags = LV_THEME_HASP_FLAG_LIGHT;
+    uint32_t hasp_flags = LV_THEME_HASP_FLAG_LIGHT + LV_THEME_HASP_FLAG_NO_TRANSITION + LV_THEME_HASP_FLAG_NO_FOCUS;
 #endif
 
 #if(LV_USE_THEME_MATERIAL == 1)
     // LV_THEME_MATERIAL_FLAG_NO_TRANSITION : disable transitions(state change animations)
     // LV_THEME_MATERIAL_FLAG_NO_FOCUS: disable indication of focused state)
-    uint32_t material_flags = LV_THEME_MATERIAL_FLAG_LIGHT + LV_THEME_MATERIAL_FLAG_NO_TRANSITION;
+    uint32_t material_flags =
+        LV_THEME_MATERIAL_FLAG_LIGHT + LV_THEME_MATERIAL_FLAG_NO_TRANSITION + LV_THEME_MATERIAL_FLAG_NO_FOCUS;
 #endif
 
     switch(themeid) {
@@ -404,11 +405,11 @@ void hasp_set_theme(uint8_t themeid)
 
 #if(LV_USE_THEME_HASP == 1)
         case 2: // Dark
-            hasp_flags = LV_THEME_HASP_FLAG_DARK;
+            hasp_flags = LV_THEME_HASP_FLAG_DARK + LV_THEME_HASP_FLAG_NO_TRANSITION + LV_THEME_HASP_FLAG_NO_FOCUS;
         case 1: // Light
         case 8: // Light (old id)
-            th = lv_theme_hasp_init(color_primary, color_secondary, hasp_flags + LV_THEME_HASP_FLAG_NO_FOCUS,
-                                    haspFonts[0], haspFonts[1], haspFonts[2], haspFonts[3]);
+            th = lv_theme_hasp_init(color_primary, color_secondary, hasp_flags, haspFonts[0], haspFonts[1],
+                                    haspFonts[2], haspFonts[3]);
             break;
 #endif
 
@@ -421,12 +422,12 @@ void hasp_set_theme(uint8_t themeid)
 
 #if LV_USE_THEME_MATERIAL == 1
         case 5: // Dark
-            material_flags = LV_THEME_MATERIAL_FLAG_DARK + LV_THEME_MATERIAL_FLAG_NO_TRANSITION;
+            material_flags =
+                LV_THEME_MATERIAL_FLAG_DARK + LV_THEME_MATERIAL_FLAG_NO_TRANSITION + LV_THEME_MATERIAL_FLAG_NO_FOCUS;
         case 4: // Light
         case 9: // Light (old id)
-            th =
-                lv_theme_material_init(color_primary, color_secondary, material_flags + LV_THEME_MATERIAL_FLAG_NO_FOCUS,
-                                       haspFonts[0], haspFonts[1], haspFonts[2], haspFonts[3]);
+            th = lv_theme_material_init(color_primary, color_secondary, material_flags, haspFonts[0], haspFonts[1],
+                                        haspFonts[2], haspFonts[3]);
             break;
 #endif
 
@@ -496,33 +497,42 @@ void haspSetup(void)
     if(haspFonts[2] == nullptr) haspFonts[2] = LV_THEME_DEFAULT_FONT_SUBTITLE;
     if(haspFonts[3] == nullptr) haspFonts[3] = LV_THEME_DEFAULT_FONT_TITLE;
 
-        // haspFonts[0] = lv_font_load("E:/font_1.fnt");
-        // haspFonts[2] = lv_font_load("E:/font_2.fnt");
+    // haspFonts[0] = lv_font_load("E:/font_1.fnt");
+    // haspFonts[2] = lv_font_load("E:/font_2.fnt");
 
+    /*
 #if defined(ARDUINO_ARCH_ESP32)
-    lv_ft_info_t info1;
-    info1.name   = "L:/arial.ttf";
-    info1.weight = 48;
-    info1.style  = FT_FONT_STYLE_NORMAL;
-    lv_ft_font_init(&info1);
-    haspFonts[4] = info1.font;
+    // lv_ft_info_t info1;
+    // info1.name   = "L:/arial.ttf";
+    // info1.weight = 48;
+    // info1.style  = FT_FONT_STYLE_NORMAL;
+    // lv_ft_font_init(&info1);
+    // haspFonts[4] = info1.font;
+    haspFonts[4] = get_font("arial"); // "L:/arial.ttf", 45, FT_FONT_STYLE_NORMAL);
+    LOG_WARNING(TAG_ATTR, "%s %d %x", __FILE__, __LINE__, haspFonts[4]);
 
-    lv_ft_info_t info2;
-    info2.name   = "L:/mdi.ttf";
-    info2.weight = 32;
-    info2.style  = FT_FONT_STYLE_NORMAL;
-    lv_ft_font_init(&info2);
-    haspFonts[5] = info2.font;
+    // lv_ft_info_t info2;
+    // info2.name   = "L:/mdi.ttf";
+    // info2.weight = 92;
+    // info2.style  = FT_FONT_STYLE_NORMAL;
+    // lv_ft_font_init(&info2);
+    // haspFonts[5] = info2.font;
+    haspFonts[5] = get_font("mdi"); // "L:/mdi.ttf", 80, FT_FONT_STYLE_NORMAL);
+    LOG_WARNING(TAG_ATTR, "%s %d %x", __FILE__, __LINE__, haspFonts[5]);
 
-    lv_ft_info_t info3;
-    info3.name   = "L:/robotocondensed.ttf";
-    info3.weight = 32;
-    info3.style  = FT_FONT_STYLE_NORMAL;
-    lv_ft_font_init(&info3);
-    haspFonts[6] = info3.font;
+    // lv_ft_info_t info3;
+    // info3.name   = "L:/robotocondensed.ttf";
+    // info3.weight = 48;
+    // info3.style  = FT_FONT_STYLE_NORMAL;
+    // lv_ft_font_init(&info3);
+    // haspFonts[6] = info3.font;
+    haspFonts[6] = get_font("robotocondensed"); // "L:/robotocondensed.ttf", 48, FT_FONT_STYLE_NORMAL);
+    LOG_WARNING(TAG_ATTR, "%s %d %x", __FILE__, __LINE__, haspFonts[6]);
 
     haspFonts[7] = hasp_font_load("L:/RobotoCondensedRegular.bin");
+    LOG_WARNING(TAG_ATTR, "%s %d %x", __FILE__, __LINE__, haspFonts[7]);
 #endif
+*/
 
     hasp_set_theme(haspThemeId);
 
@@ -632,24 +642,6 @@ void haspClearPage(uint16_t pageid)
     }
 }
 
-uint8_t haspGetPage()
-{
-    return current_page;
-}
-
-void haspSetPage(uint8_t pageid)
-{
-    lv_obj_t* page = haspPages.get_obj(pageid);
-    if(!page || pageid == 0 || pageid > HASP_NUM_PAGES) {
-        LOG_WARNING(TAG_HASP, F(D_HASP_INVALID_PAGE), pageid);
-    } else {
-        LOG_TRACE(TAG_HASP, F(D_HASP_CHANGE_PAGE), pageid);
-        current_page = pageid;
-        lv_scr_load(page);
-        hasp_object_tree(page, pageid, 0);
-    }
-}
-
 void hasp_get_info(JsonDocument& doc)
 {
     std::string buffer;
@@ -693,7 +685,11 @@ void hasp_get_info(JsonDocument& doc)
     itoa(sec, size_buf, DEC);
     buffer += size_buf;
     buffer += "s";
-    info[F(D_INFO_UPTIME)] = buffer;
+    info[F(D_INFO_ENVIRONMENT)] = PIOENV;
+    info[F(D_INFO_UPTIME)]      = buffer;
+    hasp_get_sleep_state(size_buf);
+    info[F("Idle")]        = size_buf;
+    info[F("Active Page")] = haspPages.get();
 
     info = doc.createNestedObject(F(D_INFO_DEVICE_MEMORY));
     Parser::format_bytes(haspDevice.get_free_heap(), size_buf, sizeof(size_buf));
@@ -719,11 +715,6 @@ void hasp_get_info(JsonDocument& doc)
     Parser::format_bytes(mem_mon.free_size, size_buf, sizeof(size_buf));
     info[F(D_INFO_FREE_MEMORY)]   = size_buf;
     info[F(D_INFO_FRAGMENTATION)] = mem_mon.frag_pct;
-
-    info = doc.createNestedObject(F("HASP State"));
-    hasp_get_sleep_state(size_buf);
-    info[F("Idle")]        = size_buf;
-    info[F("Active Page")] = haspPages.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

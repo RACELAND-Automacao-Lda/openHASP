@@ -1,7 +1,44 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasplib.h"
+
+// the tag data is stored as SERIALIZED JSON data
+void my_obj_set_tag(lv_obj_t* obj, const char* tag)
+{
+    size_t len = tag ? strlen(tag) : 0;
+
+    // release old tag
+    if(obj->user_data.tag) {
+        hasp_free(obj->user_data.tag);
+        obj->user_data.tag = NULL;
+    }
+
+    // new tag is blank
+    if(tag == NULL || tag[0] == '\0') return;
+
+    // create new tag
+    {
+        StaticJsonDocument<512> doc;
+
+        // check if it is a proper JSON object
+        DeserializationError error = deserializeJson(doc, tag, len);
+        if(error != DeserializationError::Ok) doc.set(tag); // use tag as-is
+
+        const size_t size = measureJson(doc) + 1;
+        if(char* str = (char*)hasp_malloc(size)) {
+            len                = serializeJson(doc, str, size); // tidy-up the json object
+            obj->user_data.tag = (void*)str;
+            LOG_VERBOSE(TAG_ATTR, "new json: %s", str);
+        }
+    }
+}
+
+// the tag data is stored as SERIALIZED JSON data
+const char* my_obj_get_tag(lv_obj_t* obj)
+{
+    return (char*)obj->user_data.tag;
+}
 
 lv_label_align_t my_textarea_get_text_align(lv_obj_t* ta)
 {

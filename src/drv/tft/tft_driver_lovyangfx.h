@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #ifndef HASP_LOVYANGFX_DRIVER_H
@@ -60,6 +60,13 @@ class LovyanGfx : BaseTft {
     bool is_driver_pin(uint8_t pin);
 
     const char* get_tft_model();
+
+    int32_t width(){
+        return tft.width();
+    }
+    int32_t height(){
+        return tft.height();
+    }
 
   private:
     uint32_t get_tft_driver();

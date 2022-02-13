@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
  For full license information read the LICENSE file in the project folder */
 
 #ifndef HASP_SDL2_DRIVER_H
@@ -27,6 +27,12 @@ class TftSdl : BaseTft {
     bool is_driver_pin(uint8_t pin);
 
     const char* get_tft_model();
+
+    int32_t width();
+    int32_t height();
+
+  private:
+    int32_t _width, _height;
 };
 
 } // namespace dev

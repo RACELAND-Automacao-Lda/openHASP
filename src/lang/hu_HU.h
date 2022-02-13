@@ -146,11 +146,13 @@
 #define D_HTTP_MAIN_MENU "Főmenü"
 #define D_HTTP_REBOOT "Újraindítás"
 #define D_HTTP_CONFIGURATION "Beállítások"
+#define D_HTTP_CONFIG_CHANGED "Configuration has changed, please click <a href='/reboot'>Restart</a> to save changes to flash." // New
 #define D_HTTP_SENDING_PAGE "%S oldal küldése %s-re"
 #define D_HTTP_FOOTER "készítette: Francis Van Roie"
 
 #define D_INFO_VERSION "Verziószám"
 #define D_INFO_BUILD_DATETIME "Build időpontja"
+#define D_INFO_ENVIRONMENT "Environment" // new
 #define D_INFO_UPTIME "Uptime"
 #define D_INFO_FREE_HEAP "Szabad Heap"
 #define D_INFO_FREE_BLOCK "Szabad Blokk"
@@ -200,24 +202,23 @@
 #define D_WIFI_RSSI_WEAK "Gyenge"
 #define D_WIFI_RSSI_BAD "Rossz"
 
-// new
-#define D_GPIO_SWITCH "Switch"
-#define D_GPIO_BUTTON "Button"
-#define D_GPIO_TOUCH "Capacitive Touch" // new
+#define D_GPIO_SWITCH "Kapcsoló"
+#define D_GPIO_BUTTON "Nyomógomb"
+#define D_GPIO_TOUCH "Kapacitív érintő"
 #define D_GPIO_LED "Led"
-#define D_GPIO_LED_R "Mood Red"
-#define D_GPIO_LED_G "Mood Green"
-#define D_GPIO_LED_B "Mood Blue"
-#define D_GPIO_POWER_RELAY "Power Relay" // new
-#define D_GPIO_LIGHT_RELAY "Light Relay" // new
+#define D_GPIO_LED_R "Keret Piros"
+#define D_GPIO_LED_G "Keret Zöld"
+#define D_GPIO_LED_B "Keret Kék"
+#define D_GPIO_POWER_RELAY "Általános relé"
+#define D_GPIO_LIGHT_RELAY "Lámpa relé"
 #define D_GPIO_PWM "PWM"
 #define D_GPIO_DAC "DAC"
-#define D_GPIO_SERIAL_DIMMER "Serial Dimmer"
-#define D_GPIO_UNKNOWN "Unknown"
+#define D_GPIO_SERIAL_DIMMER "Soros Dimmer"
+#define D_GPIO_UNKNOWN "Ismeretlen"
 #define D_GPIO_PIN "Pin"
-#define D_GPIO_GROUP "Group"
-#define D_GPIO_GROUP_NONE "None"
-#define D_GPIO_STATE_NORMAL "Normal"     // new
-#define D_GPIO_STATE_INVERTED "Inverted" // new
+#define D_GPIO_GROUP "Csoport"
+#define D_GPIO_GROUP_NONE "Nincs"
+#define D_GPIO_STATE_NORMAL "Normál"
+#define D_GPIO_STATE_INVERTED "Invertált"
 
 #endif

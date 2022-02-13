@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #ifndef HASP_PARSER_H
@@ -15,6 +15,7 @@ class Parser {
     static uint8_t get_action_id(const char* action);
     static uint16_t get_sdbm(const char* str);
     static bool is_true(const char* s);
+    static bool is_true(JsonVariant json);
     static bool is_only_digits(const char* s);
     static int format_bytes(size_t filesize, char* buf, size_t len);
 };

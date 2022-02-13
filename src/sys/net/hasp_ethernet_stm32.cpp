@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasp_conf.h"
@@ -25,7 +25,7 @@ void ethernetSetup()
         eth_connected = true;
     }
 
-    LOG_TRACE(TAG_ETH, F("MAC Address %s"), halGetMacAddress(0, ":"));
+    LOG_TRACE(TAG_ETH, F("MAC Address %s"), Ethernet.macAddress().c_str());
 
 #else
     byte mac[6];

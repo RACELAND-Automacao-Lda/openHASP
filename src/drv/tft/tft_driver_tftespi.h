@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #ifndef HASP_TFTESPI_DRIVER_H
@@ -39,6 +39,13 @@ class TftEspi : BaseTft {
     bool is_driver_pin(uint8_t pin);
 
     const char* get_tft_model();
+
+    int32_t width(){
+        return tft.width();
+    }
+    int32_t height(){
+        return tft.height();
+    }
 
   private:
     void tftOffsetInfo(uint8_t pin, uint8_t x_offset, uint8_t y_offset)

@@ -6,7 +6,7 @@
 [![Discord](https://img.shields.io/discord/538814618106331137?color=%237289DA&label=discord&logo=discord&logoColor=white)][6]
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/HASwitchPlate/openHASP/blob/master/LICENSE)
-[!["Buy Me A Coffee"](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://www.buymeacoffee.com/aktdCofU)
+[!["PayPal"](https://img.shields.io/badge/Paypal-donate-00457C.svg?logo=paypal)](https://github.com/HASwitchPlate/openHASP#donate)
 
 Control your home-automation devices from a customizable touchscreen UI connected via MQTT.
 
@@ -19,9 +19,9 @@ openHASP uses the ESP32 and STM32F4 to take advantage of the hardware capabiliti
 
 ## Demo Screens
 
-![Screenshot](https://haswitchplate.github.io/openHASP-docs/0.6/assets/images/screenshots/demo_switches_covers.png) &nbsp; 
-![Screenshot](https://haswitchplate.github.io/openHASP-docs/0.6/assets/images/screenshots/demo_jaffa1.png) &nbsp; 
-![Screenshot](https://haswitchplate.github.io/openHASP-docs/0.6/assets/images/screenshots/demo_mediaplayer.png)
+![Screenshot](https://openhasp.haswitchplate.com/0.6/assets/images/screenshots/demo_switches_covers.png) &nbsp; 
+![Screenshot](https://openhasp.haswitchplate.com/0.6/assets/images/screenshots/demo_jaffa1.png) &nbsp; 
+![Screenshot](https://openhasp.haswitchplate.com/0.6/assets/images/screenshots/demo_mediaplayer.png)
 
 ## Features
 
@@ -41,21 +41,22 @@ openHASP uses the ESP32 and STM32F4 to take advantage of the hardware capabiliti
 
 ## Getting Started
 
-Check out the [documentation](https://haswitchplate.github.io/openHASP-docs/) for how-to's, information and frequently asked questions.
+Check out the [documentation](https://openhasp.haswitchplate.com/) for how-to's, information and frequently asked questions.
 
 Support
 ---------------------------
 For support using openHASP, please join the [#openHASP channel][6] on Discord.
 
-## [Buy me a coffee](https://www.buymeacoffee.com/aktdCofU)
+## [Donate][9]
 
-[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/aktdCofU)
+[![Paypal donation](https://img.shields.io/badge/Paypal-donate-00457C?style=for-the-badge&logo=paypal)][9]
+[![Buy a coffee](https://img.shields.io/badge/Kofi-donate-FF5E5B?style=for-the-badge&logo=kofi)](https://ko-fi.com/openhasp)
+[![Buy me a coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-donate-FFDD00?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/aktdCofU)
 
 [1]: https://github.com/HASwitchPlate/HASPone
 [2]: https://github.com/lvgl/lvgl
-[3]: https://littlevgl.com/themes
-[4]: https://github.com/fvanroie/HMI-Font-Pack/releases
 [5]: https://fontawesome.com/cheatsheet/
-[6]: https://discord.gg/VCWyuhF
-[7]: https://haswitchplate.github.io/openHASP-docs/0.6/design/objects#cheatsheet
-[8]: https://haswitchplate.github.io/openHASP-docs/0.6/design/objects#image
+[6]: https://openhasp.haswitchplate.com/discord
+[7]: https://openhasp.haswitchplate.com/0.6/design/objects#cheatsheet
+[8]: https://openhasp.haswitchplate.com/0.6/design/objects#image
+[9]: https://www.paypal.com/donate/?business=E76SN28JLZCXU&currency_code=EUR

@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasplib.h"
@@ -29,7 +29,7 @@ ConsoleInput* console;
 
 void console_update_prompt()
 {
-    if(console) console->update();
+    if(console) console->update(__LINE__);
     bufferedSerialClient->flush();
 }
 
@@ -118,6 +118,7 @@ void consoleStart()
 
         console->setLineCallback(console_process_line);
         console_logon(); // todo: logon
+        console->setPrompt("Prompt > ");
     } else {
         console_logoff();
         LOG_ERROR(TAG_CONS, F(D_SERVICE_START_FAILED));

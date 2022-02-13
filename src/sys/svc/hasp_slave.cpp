@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasplib.h"
@@ -75,7 +75,7 @@ void TASMO_TELE_JSON()
                    haspDevice.get_version(), long(millis() / 1000));
 
         snprintf_P(buffer, sizeof(buffer), PSTR("\"espCanUpdate\":\"false\",\"page\":%u,\"numPages\":%u,"),
-                   haspGetPage(), (HASP_NUM_PAGES));
+                   haspPages.get(), (HASP_NUM_PAGES));
         strcat(data, buffer);
         snprintf_P(buffer, sizeof(buffer), PSTR("\"tftDriver\":\"%s\",\"tftWidth\":%u,\"tftHeight\":%u}"),
                    halDisplayDriverName().c_str(), (TFT_WIDTH), (TFT_HEIGHT));

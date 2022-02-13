@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #ifndef HASP_DEBUG_H
@@ -143,6 +143,7 @@ void debugStop(void);
 void debugPrintHaspHeader(Print* output);
 void debugPrintTag(uint8_t tag, Print* _logOutput);
 void debugPrintPrefix(uint8_t tag, int level, Print* _logOutput);
+bool debugSyslogPrefix(uint8_t tag, int level, Print* _logOutput, const char* processname);
 
 #ifdef __cplusplus
 }
@@ -189,6 +190,7 @@ enum {
     TAG_MQTT     = 65,
     TAG_MQTT_PUB = 66,
     TAG_MQTT_RCV = 67,
+    TAG_FTP      = 68,
 
     TAG_LVGL = 90,
     TAG_LVFS = 91,

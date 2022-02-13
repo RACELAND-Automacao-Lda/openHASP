@@ -1,10 +1,31 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #ifndef HASP_GUI_H
 #define HASP_GUI_H
 
 #include "hasplib.h"
+
+struct bmp_header_t
+{
+    uint32_t bfSize;
+    uint32_t bfReserved;
+    uint32_t bfOffBits;
+
+    uint32_t biSize;
+    int32_t biWidth;
+    int32_t biHeight;
+    uint16_t biPlanes;
+    uint16_t biBitCount;
+    uint32_t biCompression;
+    uint32_t biSizeImage;
+    int32_t biXPelsPerMeter;
+    int32_t biYPelsPerMeter;
+    uint32_t biClrUsed;
+    uint32_t biClrImportant;
+
+    uint32_t bdMask[3];
+};
 
 struct gui_conf_t
 {

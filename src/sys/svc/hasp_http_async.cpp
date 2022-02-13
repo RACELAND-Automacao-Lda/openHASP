@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 //#include "webServer.h"
@@ -488,7 +488,7 @@ void webHandleAbout(AsyncWebServerRequest* request)
     String httpMessage((char*)0);
     httpMessage.reserve(HTTP_PAGE_SIZE);
 
-    httpMessage += F("<p><h3>openHASP</h3>Copyright&copy; 2019-2021 Francis Van Roie ");
+    httpMessage += F("<p><h3>openHASP</h3>Copyright&copy; 2019-2022 Francis Van Roie ");
     httpMessage += mitLicense;
     httpMessage += F("<p>Based on the previous work of the following open source developers.</p><hr>");
     httpMessage += F("<p><h3>HASwitchPlate</h3>Copyright&copy; 2019 Allen Derusha allen@derusha.org</b>");
@@ -1969,9 +1969,9 @@ void webHandleHaspConfig(AsyncWebServerRequest* request)
 
         while(file) {
             String filename = file.name();
-            if(filename.endsWith(".zi"))
-                httpMessage +=
-                    getOption(file.name(), file.name(), filename == settings[FPSTR(FP_CONFIG_ZIFONT)].as<String>());
+            // if(filename.endsWith(".zi"))
+            //     httpMessage +=
+            //         getOption(file.name(), file.name(), filename == settings[FPSTR(FP_CONFIG_ZIFONT)].as<String>());
             file = root.openNextFile();
         }
 #elif defined(ARDUINO_ARCH_ESP8266)
@@ -2145,7 +2145,7 @@ void httpHandleResetConfig(AsyncWebServerRequest* request)
         httpMessage += haspDevice.get_hostname();
         httpMessage += F("</h1><hr>");
 
-        if(resetConfirmed) { // User has confirmed, so reset everything
+        if(resetConfirmed) {                           // User has confirmed, so reset everything
             bool formatted = dispatch_factory_reset(); // configClearEeprom();
             if(formatted) {
                 httpMessage += F("<b>Resetting all saved settings and restarting device</b>");
@@ -2328,7 +2328,6 @@ void httpReconnect()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 IRAM_ATTR void httpLoop(void)
 {}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void httpEverySecond()

@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasplib.h"
@@ -15,8 +15,8 @@
 #include "drv/touch/touch_driver.h"
 
 //#include "drv/hasp_drv_display.h"
-// #include "drv/old/hasp_drv_touch.h"
-// #include "drv/old/hasp_drv_tft_espi.h"
+//#include "drv/old/hasp_drv_touch.h"
+//#include "drv/old/hasp_drv_tft_espi.h"
 
 #include "hasp_debug.h"
 #include "hasp_config.h"
@@ -101,51 +101,57 @@ static inline void gui_init_lvgl()
     lv_log_register_print_cb(debugLvglLogEvent);
 #endif
 
-    static lv_color_t *guiVdbBuffer1, *guiVdbBuffer2 = NULL;
-
     /* Create the Virtual Device Buffers */
-#if defined(ARDUINO_ARCH_ESP32)
+    // #if defined(ARDUINO_ARCH_ESP32)
+    //
+    // #ifdef USE_DMA_TO_TFT
+    //     // DMA: len must be less than 32767
+    //     const size_t guiVDBsize = 15 * 1024u; // 30 KBytes
+    //     guiVdbBuffer1           = (lv_color_t*)heap_caps_calloc(guiVDBsize, sizeof(lv_color_t), MALLOC_CAP_DMA);
+    //     // guiVdbBuffer2 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * guiVDBsize,   MALLOC_CAP_DMA);
+    //     // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, guiVdbBuffer2, guiVDBsize);
+    // #else
+    //     const size_t guiVDBsize = 8 * 1024u; // 32 KBytes
 
-#ifdef USE_DMA_TO_TFT
-    // DMA: len must be less than 32767
-    const size_t guiVDBsize = 15 * 1024u; // 30 KBytes
-    guiVdbBuffer1           = (lv_color_t*)heap_caps_calloc(guiVDBsize, sizeof(lv_color_t), MALLOC_CAP_DMA);
-    // guiVdbBuffer2 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * guiVDBsize,   MALLOC_CAP_DMA);
-    // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, guiVdbBuffer2, guiVDBsize);
-#else
-    const size_t guiVDBsize = 16 * 1024u; // 32 KBytes
+    //     if(0 && psramFound()) {
+    //         guiVdbBuffer1 = (lv_color_t*)ps_calloc(guiVDBsize, sizeof(lv_color_t)); // too slow for VDB
+    //     } else {
+    //         guiVdbBuffer1 = (lv_color_t*)calloc(guiVDBsize, sizeof(lv_color_t));
+    //     }
 
-    if(0 && psramFound()) {
-        guiVdbBuffer1 = (lv_color_t*)ps_calloc(guiVDBsize, sizeof(lv_color_t)); // too slow for VDB
-    } else {
-        guiVdbBuffer1 = (lv_color_t*)calloc(guiVDBsize, sizeof(lv_color_t));
-    }
+    // #endif
 
-#endif
+    //     // static lv_color_t * guiVdbBuffer2 = (lv_color_t *)malloc(sizeof(lv_color_t) * guiVDBsize);
+    //     // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, guiVdbBuffer2, guiVDBsize);
 
-    // static lv_color_t * guiVdbBuffer2 = (lv_color_t *)malloc(sizeof(lv_color_t) * guiVDBsize);
-    // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, guiVdbBuffer2, guiVDBsize);
+    // #elif defined(ARDUINO_ARCH_ESP8266)
+    //     /* allocate on heap */
+    //     // static lv_color_t guiVdbBuffer1[2 * 512u]; // 4 KBytes
+    //     // size_t guiVDBsize = sizeof(guiVdbBuffer1) / sizeof(guiVdbBuffer1[0]);
+    //     // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, NULL, guiVDBsize);
 
-#elif defined(ARDUINO_ARCH_ESP8266)
-    /* allocate on heap */
-    // static lv_color_t guiVdbBuffer1[2 * 512u]; // 4 KBytes
-    // size_t guiVDBsize = sizeof(guiVdbBuffer1) / sizeof(guiVdbBuffer1[0]);
-    // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, NULL, guiVDBsize);
+    //     const size_t guiVDBsize = 2 * 512u; // 4 KBytes * 2
+    //     guiVdbBuffer1           = (lv_color_t*)malloc(sizeof(lv_color_t) * guiVDBsize);
 
-    const size_t guiVDBsize = 2 * 512u; // 4 KBytes * 2
-    guiVdbBuffer1           = (lv_color_t*)malloc(sizeof(lv_color_t) * guiVDBsize);
+    // #elif defined(WINDOWS) || defined(POSIX)
+    //     const size_t guiVDBsize = LV_HOR_RES_MAX * 10;
+    //     //  static lv_color_t guiVdbBuffer1[guiVDBsize]; /*Declare a buffer for 10 lines*/
+    //     guiVdbBuffer1 = (lv_color_t*)calloc(guiVDBsize, sizeof(lv_color_t));
 
-#elif defined(WINDOWS) || defined(POSIX)
-    const size_t guiVDBsize = LV_HOR_RES_MAX * 10;
-    //  static lv_color_t guiVdbBuffer1[guiVDBsize]; /*Declare a buffer for 10 lines*/
-    guiVdbBuffer1 = (lv_color_t*)calloc(guiVDBsize, sizeof(lv_color_t));
+    // #else
+    //     static lv_color_t guiVdbBuffer1[16 * 512u]; // 16 KBytes
+    //     // static lv_color_t guiVdbBuffer2[16 * 512u]; // 16 KBytes
+    //     size_t guiVDBsize = sizeof(guiVdbBuffer1) / sizeof(guiVdbBuffer1[0]);
+    //     // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, guiVdbBuffer2, guiVDBsize);
+    // #endif
 
-#else
-    static lv_color_t guiVdbBuffer1[16 * 512u]; // 16 KBytes
-    // static lv_color_t guiVdbBuffer2[16 * 512u]; // 16 KBytes
-    size_t guiVDBsize = sizeof(guiVdbBuffer1) / sizeof(guiVdbBuffer1[0]);
-    // lv_disp_buf_init(&disp_buf, guiVdbBuffer1, guiVdbBuffer2, guiVDBsize);
-#endif
+    /* Dynamic VDB allocation */
+    const size_t guiVDBsize          = LV_VDB_SIZE / 2;
+    static lv_color_t* guiVdbBuffer1 = (lv_color_t*)malloc(sizeof(lv_color_t) * guiVDBsize);
+
+    /* Static VDB allocation */
+    // static lv_color_t guiVdbBuffer1[LV_VDB_SIZE * 512u];
+    // const size_t guiVDBsize = sizeof(guiVdbBuffer1) / sizeof(lv_color_t);
 
     /* Initialize VDB */
     if(guiVdbBuffer1 && guiVDBsize > 0) {
@@ -238,7 +244,7 @@ static inline void gui_init_images()
 #endif
 
 #if defined(ARDUINO_ARCH_ESP32)
-    if(psramFound()) lv_img_cache_set_size(LV_IMG_CACHE_DEF_SIZE_PSRAM);
+    if(hasp_use_psram()) lv_img_cache_set_size(LV_IMG_CACHE_DEF_SIZE_PSRAM);
 #endif
 }
 
@@ -248,7 +254,7 @@ static inline void gui_init_freetype()
 // #ifdef 1 || USE_LVGL_FREETYPE
 #if defined(ARDUINO_ARCH_ESP32)
     if(lv_freetype_init(USE_LVGL_FREETYPE_MAX_FACES, USE_LVGL_FREETYPE_MAX_SIZES,
-                        psramFound() ? USE_LVGL_FREETYPE_MAX_BYTES_PSRAM : USE_LVGL_FREETYPE_MAX_BYTES)) {
+                        hasp_use_psram() ? USE_LVGL_FREETYPE_MAX_BYTES_PSRAM : USE_LVGL_FREETYPE_MAX_BYTES)) {
         LOG_VERBOSE(TAG_FONT, F("FreeType v%d.%d.%d " D_SERVICE_STARTED), FREETYPE_MAJOR, FREETYPE_MINOR,
                     FREETYPE_PATCH);
     } else {
@@ -292,8 +298,9 @@ void guiSetup()
     LOG_TRACE(TAG_LVGL, F(D_SERVICE_STARTING));
     gui_init_lvgl();
     gui_init_images();
-    gui_init_freetype();
     gui_init_filesystems();
+    gui_init_freetype();
+    font_setup();
 
     /* Initialize the LVGL display driver with correct orientation */
 #if(TOUCH_DRIVER == 0x2046) || defined(LGFX_USE_V1) // Use native display driver to rotate display and touch
@@ -475,10 +482,10 @@ bool guiGetConfig(const JsonObject& settings)
     settings[FPSTR(FP_GUI_ROTATION)] = gui_settings.rotation;
 
     if(gui_settings.show_pointer != settings[FPSTR(FP_GUI_POINTER)].as<bool>()) changed = true;
-    settings[FPSTR(FP_GUI_POINTER)] = gui_settings.show_pointer;
+    settings[FPSTR(FP_GUI_POINTER)] = (uint8_t)gui_settings.show_pointer;
 
     if(gui_settings.invert_display != settings[FPSTR(FP_GUI_INVERT)].as<bool>()) changed = true;
-    settings[FPSTR(FP_GUI_INVERT)] = gui_settings.invert_display;
+    settings[FPSTR(FP_GUI_INVERT)] = (uint8_t)gui_settings.invert_display;
 
     /* Check CalData array has changed */
     JsonArray array = settings[FPSTR(FP_GUI_CALIBRATION)].as<JsonArray>();
@@ -608,11 +615,42 @@ static void guiSetBmpHeader(uint8_t* buffer_p, int32_t data)
  **/
 static void gui_get_bitmap_header(uint8_t* buffer, size_t bufsize)
 {
-    memset(buffer, 0, bufsize);
-
     lv_disp_t* disp = lv_disp_get_default();
-    buffer[0]       = 0x42; // B
-    buffer[1]       = 0x4D; // M
+
+    // memset(buffer, 0, bufsize);
+    const char* bm = "BM";
+    memcpy(buffer, bm, strlen(bm));
+    buffer += strlen(bm);
+
+    bmp_header_t* bmp = (bmp_header_t*)buffer;
+    bmp->bfSize       = (uint32_t)(disp->driver.hor_res * disp->driver.ver_res * LV_COLOR_DEPTH / 8);
+    bmp->bfReserved   = 0;
+    bmp->bfOffBits    = 66;
+
+    bmp->biSize          = 40;
+    bmp->biWidth         = disp->driver.hor_res;
+    bmp->biHeight        = -disp->driver.ver_res;
+    bmp->biPlanes        = 1;
+    bmp->biBitCount      = LV_COLOR_DEPTH;
+    bmp->biCompression   = 3; // BI_BITFIELDS
+    bmp->biSizeImage     = bmp->bfSize;
+    bmp->biXPelsPerMeter = 2836;
+    bmp->biYPelsPerMeter = 2836;
+    bmp->biClrUsed       = 0;
+    bmp->biClrImportant  = 0;
+
+    // R: 1111 1000 | 0000 0000
+    bmp->bdMask[0] = 0xF800; // Red bitmask
+                             // G: 0000 0111 | 1110 0000
+    bmp->bdMask[1] = 0x07E0; // Green bitmask
+                             // B: 0000 0000 | 0001 1111
+    bmp->bdMask[2] = 0x001F; // Blue bitmask
+
+/*
+    return;
+    // lv_disp_t* disp = lv_disp_get_default();
+    buffer[0] = 0x42; // B
+    buffer[1] = 0x4D; // M
 
     buffer[10 + 0] = 122;      // full header size
     buffer[14 + 0] = 122 - 14; // dib header size
@@ -653,6 +691,7 @@ static void gui_get_bitmap_header(uint8_t* buffer, size_t bufsize)
     buffer[70 + 2] = 0x69;
     buffer[70 + 1] = 0x6E;
     buffer[70 + 0] = 0x20;
+    */
 }
 
 void gui_flush_not_complete()
@@ -692,8 +731,8 @@ void guiTakeScreenshot(const char* pFileName)
     pFileOut = HASP_FS.open(pFileName, "w");
     if(pFileOut) {
 
-        size_t len = pFileOut.write(buffer, 122);
-        if(len == 122) {
+        size_t len = pFileOut.write(buffer, 66);
+        if(len == 66) {
             LOG_VERBOSE(TAG_GUI, F("Bitmap header written"));
 
             /* Refresh screen to screenshot callback */
@@ -745,7 +784,7 @@ void guiTakeScreenshot()
     uint8_t buffer[128];
     gui_get_bitmap_header(buffer, sizeof(buffer));
 
-    if(httpClientWrite(buffer, 122) == 122) {
+    if(httpClientWrite(buffer, 66) == 66) { // 122
         LOG_VERBOSE(TAG_GUI, F("Bitmap header sent"));
 
         /* Refresh screen to screenshot callback */

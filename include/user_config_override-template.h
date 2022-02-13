@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 /***************************************************
@@ -53,6 +53,9 @@
 /***************************************************
  *        Timezone Settings
  **************************************************/
+#define NTPSERVER1 "pool.ntp.org"
+#define NTPSERVER2 "time.nist.gov"
+#define NTPSERVER3 "time.google.com"
 #define MYTZ                                                                                                           \
     "CET-1CEST,M3.5.0,M10.5.0/3" // A full list with possible timezones can be found here
                                  // https://gist.github.com/alwynallan/24d96091655391107939
@@ -138,5 +141,7 @@
 //#define HASP_START_CONSOLE 0                        // Disable starting of serial console at boot
 //#define HASP_START_TELNET 0                         // Disable starting of telnet service at boot
 //#define HASP_START_HTTP 0                           // Disable starting of web interface at boot
-
+//#define LV_MEM_SIZE (64 * 1024U)                    // 64KiB of lvgl memory (default 48)
+//#define LV_VDB_SIZE (32 * 1024U)                    // 32KiB of lvgl draw buffer (default 32)
+//#define HASP_DEBUG_OBJ_TREE                         // Output all objects to the log on page changes
 #endif

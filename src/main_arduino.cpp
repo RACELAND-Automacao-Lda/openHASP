@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #if !(defined(WINDOWS) || defined(POSIX))
@@ -98,12 +98,16 @@ void setup()
     httpSetup();
 #endif
 
-// #if HASP_USE_CONSOLE > 0
-//     consoleSetup(); // the consoleSetup is called in debugSetup
-// #endif
+    // #if HASP_USE_CONSOLE > 0
+    //     consoleSetup(); // the consoleSetup is called in debugSetup
+    // #endif
 
 #if HASP_USE_TELNET > 0
     telnetSetup();
+#endif
+
+#if HASP_USE_FTP > 0
+    ftpSetup();
 #endif
 
 #if HASP_USE_TASMOTA_CLIENT > 0
@@ -159,6 +163,10 @@ IRAM_ATTR void loop()
 
         /* Runs Every Second */
         haspEverySecond(); // sleep timer & statusupdate
+
+#if HASP_USE_FTP > 0
+        ftpEverySecond();
+#endif
 
 #if HASP_USE_TELNET > 0
         telnetEverySecond();

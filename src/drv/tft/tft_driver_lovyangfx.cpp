@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #if defined(ARDUINO) && defined(LGFX_USE_V1)
@@ -87,14 +87,15 @@ void LovyanGfx::init(int w, int h)
         cfg.pin_d4     = TFT_D4;
         cfg.pin_d5     = TFT_D5;
         cfg.pin_d6     = TFT_D6;
-        cfg.pin_d7     = TFT_D7 bus->config(cfg); // 設定値をバスに反映します。
-        tft._panel_instance.setBus(bus);          // Set the bus on the panel.
+        cfg.pin_d7     = TFT_D7;
+        bus->config(cfg); // 設定値をバスに反映します。
+        tft._panel_instance->setBus(bus);          // Set the bus on the panel.
     }
 #else
     {                    // Set SPI bus control
         auto bus       = (lgfx::v1::Bus_SPI*)tft._bus_instance;
         auto cfg       = bus->config(); // Get the structure for bus configuration.
-        cfg.spi_host   = HSPI_HOST;     // Select the SPI to use  (VSPI_HOST or HSPI_HOST)
+        cfg.spi_host   = FSPI_HOST;     // Select the SPI to use  (VSPI_HOST or HSPI_HOST)
         cfg.spi_mode   = 0;             // Set SPI communication mode  (0 ~ 3)
         cfg.freq_write = SPI_FREQUENCY; // SPI clock during transmission  (Max 80MHz, 80MHz Can be rounded to the value
                                         // divided by an integer )
@@ -185,7 +186,7 @@ void LovyanGfx::init(int w, int h)
         cfg.offset_rotation = 0;              // Adjustment when the display and touch orientation do not match:
                                               // Set with a value from 0 to 7
         cfg.bus_shared = true;                // Set to true if you are using the same bus as the screen
-        cfg.spi_host   = HSPI_HOST;           // Select the SPI to use  (HSPI_HOST or VSPI_HOST)
+        cfg.spi_host   = FSPI_HOST;           // Select the SPI to use  (HSPI_HOST or VSPI_HOST)
         cfg.pin_sclk   = TFT_SCLK;            // SCLK Pin Number
         cfg.pin_mosi   = TFT_MOSI;            // MOSI Pin Number
         cfg.pin_miso   = TFT_MISO;            // MISO Pin Number

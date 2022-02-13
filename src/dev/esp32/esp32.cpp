@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #if defined(ESP32)
@@ -150,6 +150,7 @@ const char* Esp32Device::get_chip_model()
         case CHIP_ESP32:
             return "ESP32";
 
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
 #ifdef ESP32
         case CHIP_ESP32S2:
             return "ESP32-S2";
@@ -162,6 +163,7 @@ const char* Esp32Device::get_chip_model()
 
         case CHIP_ESP32H2:
             return "ESP32-H2";
+#endif
 #endif
 
         default:
@@ -183,7 +185,11 @@ void Esp32Device::set_backlight_pin(uint8_t pin)
     /* Setup Backlight Control Pin */
     if(pin < GPIO_NUM_MAX) {
         LOG_VERBOSE(TAG_GUI, F("Backlight  : Pin %d"), pin);
+#ifndef ESP32S2
         ledcSetup(BACKLIGHT_CHANNEL, 20000, 12);
+#else
+        ledcSetup(BACKLIGHT_CHANNEL, 20000, 10);
+#endif
         ledcAttachPin(pin, BACKLIGHT_CHANNEL);
         update_backlight();
     } else {
@@ -216,9 +222,15 @@ bool Esp32Device::get_backlight_power()
 void Esp32Device::update_backlight()
 {
     if(_backlight_pin < GPIO_NUM_MAX) {
+#ifndef ESP32S2
         uint32_t duty = _backlight_power ? map(_backlight_level, 0, 255, 0, 4095) : 0;
         if(_backlight_invert) duty = 4095 - duty;
         ledcWrite(BACKLIGHT_CHANNEL, duty); // ledChannel and value
+#else
+        uint32_t duty = _backlight_power ? map(_backlight_level, 0, 255, 0, 1023) : 0;
+        if(_backlight_invert) duty = 1023 - duty;
+        ledcWrite(BACKLIGHT_CHANNEL, duty); // ledChannel and value
+#endif
     }
 
     // haspTft.tft.writecommand(0x53); // Write CTRL Display

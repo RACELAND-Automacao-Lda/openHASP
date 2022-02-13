@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasplib.h"
@@ -91,7 +91,9 @@ void Page::set(uint8_t pageid, lv_scr_load_anim_t animation)
         if(page != lv_scr_act()) {
             LOG_TRACE(TAG_HASP, F(D_HASP_CHANGE_PAGE), pageid);
             lv_scr_load_anim(page, animation, 500, 0, false);
+#if defined(HASP_DEBUG_OBJ_TREE)
             hasp_object_tree(page, pageid, 0);
+#endif
         }
     }
 }

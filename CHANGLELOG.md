@@ -2,30 +2,62 @@
 
 ## v0.7.0
 
+### Web UI
+- _Selectable dark/light theme?_
+
+### Objects
+- All objects have a custom `tag` property which can contain abritrary JSON data *(or numbers or text)* (thanks @nagyrobi)
+
 ### Fonts
 - Use FreeType fonts from flash
 - Use LVGL binary fonts from flash, loaded into PSram
-- Removed defunct .zi font support
-- Breaking: The UTF codes for the built-in icons have changed from the previous list!
-- _Breaking: Font ID is replaced by xxxx?_
+- ~~Breaking: The UTF codes for the built-in icons have changed from the previous list!~~
+- Font ID is replaced by `namexx` (`where xx is the size`) but the previous Font ID still works for backwards compatibility
+
+### Services
+- Add SimpleFTPServer to easily upload and download files to the plate *(one simultanious connection only)*
+
+
+## v0.6.3
 
 ### Web UI
 - Updated to modern responsive design
 - Allow for a customizible `vars.css`, `style.css`, `script.js` and `edit.htm`
-- _Selectable dark/light theme?_
+- Display info message when configuration is changed and reboot is needed
+- Add checkbox to toggle ANSI codes (thanks @geiseri)
 
-### Commands
+### GUI
 - Hide cursor during `antiburn` and `idle` if the pointer is enabled
+- Screenshot images now display properly in Safari on macOS/iOS (thanks @masto)
+
+### Objects
+- `img.src` now accepts both `http` and `https` urls (thanks @htvekov)
+- `img.src` now accepts `png` and `binary` image urls, PSram is *highly* recommended
+- `img.src` now accepts 16-bit BMP files stored in flash
+
+### Fonts
+- Added Vietnamese encoding build option (thanks @kydang789)
+- **Breaking:** Removed defunct .zi font support
+
+### Bug fixes
+- Fix bug that would not accept `on` state for setting output GPIOs (thanks @freshnas and @cerietke)
+- Fix a bug in `dropdownlist` were `close` method performed `open` instead (thanks @htvekov)
+- Fix `src` bug in `img` objects that could corrupt images sent over http (thanks @htvekov)
+- Fix screen dimensions in `statusupdate` message, taking into account current orientation (thanks @kquinsland)
+- Fix syslog message format (thanks @geiseri)
+- Fix for HTTP password that could be overwritten by 8 asterisks when it was not changed in the web UI
 
 ### Custom component
-- Expose `antiburn` for the CC
-- Expose the device URL in discovery messages
+- Expose `antiburn` for the CC (thanks @dgomes)
+- Expose the device URL in discovery message
 
 ### Architecture
-- Moved to Arduino 2.0 with native LittleFS library
+- Moved to Arduino 2.0.2 with native LittleFS library
 - Moved to ESP-IDF 4.4 with fix for FragAttacks CVEs
-- Prepare support for ESP32S2
-- Breaking: Removed support for ESP8266
+- Prepare support for ESP32-S2
+- **Breaking:** Removed support for ESP8266!
+
+Updated libraries to ArduinoJson 6.19.1, TFT_eSPI 2.4.32, LovyanGFX 0.4.12 and Adafruit STMPE610 1.1.4
 
 
 ## v0.6.2
@@ -46,7 +78,7 @@
 
 ### Devices
 - Add Analog touch driver for Unoshield displays (thanks @wesleygas)
-- Add Arduitouch MOD ESP32 with 2.4" or 2.8"
+- Add AZ-Touch MOD ESP32 with 2.4" or 2.8"
 - Add Lilygo®Ttgo Pi ESP32 with TFT 3.5"
 - Add Waveshare ESP32 One development board with Rpi MHS4001(B) or Waveshare RPi(C) LCD display
 - Add D1-R32 ESP32 development board with with Waveshare ILI9486 Touch Shield
@@ -58,7 +90,7 @@
 - Fix configurable mqttPort (thanks @Qargh)
 - Fix opaque background of `spinner` object in HASP theme (thanks @nagyrobi)
 
-Updated AceButton to 1.9.1 and ArduinoJson to 6.18.5
+Updated libraries to AceButton 1.9.1 and ArduinoJson 6.18.5
 
 
 ## v0.6.1
@@ -73,23 +105,23 @@ Updated AceButton to 1.9.1 and ArduinoJson to 6.18.5
 - Run `/online.cmd` or `/offline.cmd` script when the wifi status changed
 
 ### Objects
-- Add new *[line](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/objects/#line)* object
-- Add `val` to *[btnmatrix](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/objects/#button-matrix)* when `one_select` is set
-- Cache up to 20 *[images](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/objects/#image)* in PSram when available
-- Improve precision on the *[linemeter](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/objects/#line-meter)* scales
-- Fix *[dropdown](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/objects/#dropdown-list)* redraw bug
+- Add new *[line](https://openhasp.haswitchplate.com/0.6.1/design/objects/#line)* object
+- Add `val` to *[btnmatrix](https://openhasp.haswitchplate.com/0.6.1/design/objects/#button-matrix)* when `one_select` is set
+- Cache up to 20 *[images](https://openhasp.haswitchplate.com/0.6.1/design/objects/#image)* in PSram when available
+- Improve precision on the *[linemeter](https://openhasp.haswitchplate.com/0.6.1/design/objects/#line-meter)* scales
+- Fix *[dropdown](https://openhasp.haswitchplate.com/0.6.1/design/objects/#dropdown-list)* redraw bug
 
 ### Devices
-- Fix [L8-HD dimmer](https://haswitchplate.github.io/openHASP-docs/0.6.1/devices/lanbon-l8/) not responding correctly to mqtt after a reboot
-- Add [M5Stack Core2](https://haswitchplate.github.io/openHASP-docs/0.6.1/devices/m5stack-core2/) backlight dimming
-- Add [Yeacreate Nscreen32](https://haswitchplate.github.io/openHASP-docs/0.6.1/devices/yeacreate-nscreen32/)
-- Add [Makerfabs ESP32 TFT Touch](https://haswitchplate.github.io/openHASP-docs/0.6.1/devices/makerfabs-tft-touch/) Capacitive
+- Fix [L8-HD dimmer](https://openhasp.haswitchplate.com/0.6.1/devices/lanbon-l8/) not responding correctly to mqtt after a reboot
+- Add [M5Stack Core2](https://openhasp.haswitchplate.com/0.6.1/devices/m5stack-core2/) backlight dimming
+- Add [Yeacreate Nscreen32](https://openhasp.haswitchplate.com/0.6.1/devices/yeacreate-nscreen32/)
+- Add [Makerfabs ESP32 TFT Touch](https://openhasp.haswitchplate.com/0.6.1/devices/makerfabs-tft-touch/) Capacitive
 
 ### Fonts
-- [Additional characters](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/fonts/#ascii): `²` (squared) and `³` (cubed)
-- [Additional icons](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/fonts/#built-in-icons): recycle-variant and additional weather icons
-- Use latin1 as default charset on [WT32-SC01](https://haswitchplate.github.io/openHASP-docs/0.6.1/devices/wt32-sc01/)
-- Add [Greek font](https://haswitchplate.github.io/openHASP-docs/0.6.1/design/fonts/#greek)
+- [Additional characters](https://openhasp.haswitchplate.com/0.6.1/design/fonts/#ascii): `²` (squared) and `³` (cubed)
+- [Additional icons](https://openhasp.haswitchplate.com/0.6.1/design/fonts/#built-in-icons): recycle-variant and additional weather icons
+- Use latin1 as default charset on [WT32-SC01](https://openhasp.haswitchplate.com/0.6.1/devices/wt32-sc01/)
+- Add [Greek font](https://openhasp.haswitchplate.com/0.6.1/design/fonts/#greek)
 
 ### Compiling
 - Allow custom bootlogo
@@ -136,7 +168,7 @@ Updated AceButton to 1.9.1 and ArduinoJson to 6.18.5
 - Allow dynamic configuration of HA entities using the [openHASP Custom Component](https://github.com/HASwitchPlate/openHASP-custom-component/releases/) (thanks @dgomes)
 - Add Manufacturer and Model to statusupdate
 
-### Updated lvgl to 7.11.0, ArduinoJson to 6.18.0 and TFT_eSPI to 2.3.70
+Updated libraries to lvgl 7.11.0, ArduinoJson 6.18.0 and TFT_eSPI 2.3.70
 
 ### Internationalization:
 - Added French language
@@ -157,7 +189,7 @@ Updated AceButton to 1.9.1 and ArduinoJson to 6.18.5
 
 ## v0.5.0
 
-Name changed to openHASP - https://haswitchplate.github.io/openHASP-docs/
+Name changed to openHASP - https://openhasp.haswitchplate.com/
 > When using HomeAssistant also update the [openHASP Custom Component](https://github.com/HASwitchPlate/openHASP-custom-component/releases/tag/0.5.0)
 
 - Switch built-in icons from FontAwesome to MaterialDesign icons #139
@@ -167,8 +199,8 @@ Name changed to openHASP - https://haswitchplate.github.io/openHASP-docs/
 - Add `action` property for local page navigation
 - Add `back`, `prev`, `next` attributes to pages #114
 - JSON Serialize text in payloads containing text attributes #140
-- Add arduitouch-esp32_ili9341 config and allow for TFT_BACKLIGHT_ON set to LOW #131
-- Add [FreeTouchDeck](https://haswitchplate.github.io/openHASP-docs/#devices/freetouchdeck/) and [ESP32-Touchdown](https://haswitchplate.github.io/openHASP-docs/#devices/esp32-touchdown/) configs
+- Add az-touch-mod-esp32_ili9341 config and allow for TFT_BACKLIGHT_ON set to LOW #131
+- Add [FreeTouchDeck](https://openhasp.haswitchplate.com/0.5/#devices/freetouchdeck/) and [ESP32-Touchdown](https://openhasp.haswitchplate.com/0.5/#devices/esp32-touchdown/) configs
 - Add roller `mode` `infinite` attribute
 - Add btnmatrix `toggle` and `one_check` attributes
 - Rework all event handlers to reduce update events and prevent race condition #119 *(events have changed!)*
@@ -192,11 +224,11 @@ Changes:
 - Allow long wifi passwords (#71 thanks @nagyrobi)
 - Wakeup screen on first touch (#80)
 - Reduce slider events (#88)
-- Update events to accommodate the [HA Custom Component](https://github.com/dgomes/hasp-lvgl-custom-component) (by @dgomes)
+- Update events to accommodate the [HA Custom Component](https://github.com/HASwitchPlate/openHASP-custom-component) (by @dgomes)
 - Remove HA auto-discovery in favor of the HA Custom Component
 - Add `clearpage all` command option
 - Add local page navigation and transitions
-- Add [scale properties](https://fvanroie.github.io/hasp-docs/#styling/#scale)
+- Add [scale properties](https://openhasp.haswitchplate.com/0.5/#styling/#scale)
 - Add `config/gpio` command
 - Allow for timezone setting in user_config_override.h (thanks @arovak)
 - Start localizations for NL, HU and RO (thanks @nagyrobi)

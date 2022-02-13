@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #include "hasp_conf.h"
@@ -54,7 +54,7 @@ uint32_t mqttPublishCount;
 uint32_t mqttReceiveCount;
 uint32_t mqttFailedCount;
 
-char mqttServer[MAX_USERNAME_LENGTH]   = MQTT_HOST;
+char mqttServer[MAX_HOSTNAME_LENGTH]   = MQTT_HOST;
 char mqttUsername[MAX_USERNAME_LENGTH] = MQTT_USER;
 char mqttPassword[MAX_PASSWORD_LENGTH] = MQTT_PASSW;
 // char mqttNodeName[16]  = MQTT_NODENAME;

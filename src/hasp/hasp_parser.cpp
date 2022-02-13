@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #ifdef ARDUINO
@@ -152,6 +152,11 @@ bool Parser::is_true(const char* s)
 {
     return (!strcasecmp_P(s, PSTR("true")) || !strcasecmp_P(s, PSTR("on")) || !strcasecmp_P(s, PSTR("yes")) ||
             !strcmp_P(s, PSTR("1")));
+}
+
+bool Parser::is_true(JsonVariant json)
+{
+    return is_true(json.as<std::string>().c_str());
 }
 
 bool Parser::is_only_digits(const char* s)

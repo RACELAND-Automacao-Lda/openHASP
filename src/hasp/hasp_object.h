@@ -1,4 +1,4 @@
-/* MIT License - Copyright (c) 2019-2021 Francis Van Roie
+/* MIT License - Copyright (c) 2019-2022 Francis Van Roie
    For full license information read the LICENSE file in the project folder */
 
 #ifndef HASP_OBJECT_H
@@ -90,6 +90,7 @@ void hasp_object_tree(const lv_obj_t* parent, uint8_t pageid, uint16_t level);
 void object_dispatch_state(uint8_t pageid, uint8_t btnid, const char* payload);
 
 void hasp_process_attribute(uint8_t pageid, uint8_t objid, const char* attr, const char* payload, bool update);
+int hasp_parse_json_attributes(lv_obj_t* obj, const JsonObject& doc);
 
 void object_set_normalized_group_values(hasp_update_value_t& value);
 
