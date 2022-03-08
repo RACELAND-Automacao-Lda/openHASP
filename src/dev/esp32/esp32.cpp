@@ -20,7 +20,7 @@
 
 #define BACKLIGHT_CHANNEL 0
 
-#ifndef ESP32S2
+#if !defined(CONFIG_IDF_TARGET_ESP32S2)
 uint8_t temprature_sens_read();
 #endif
 
@@ -322,7 +322,7 @@ void Esp32Device::get_info(JsonDocument& doc)
 
 void Esp32Device::get_sensors(JsonDocument& doc)
 {
-#ifndef ESP32S2
+#if !defined(CONFIG_IDF_TARGET_ESP32S2)
     JsonObject sensor        = doc.createNestedObject(F("ESP32"));
     uint32_t temp            = (temprature_sens_read() - 32) * 100 / 1.8;
     sensor[F("Temperature")] = serialized(String(1.0f * temp / 100, 2));
@@ -340,7 +340,7 @@ long Esp32Device::get_uptime()
 // #warning Building for Lanbon L8
 #include "dev/esp32/lanbonl8.h"
 #elif defined(M5STACK)
-// #warning Building for M5Stack core2
+                                            // #warning Building for M5Stack core2
 #include "dev/esp32/m5stackcore2.h"
 #else
 dev::Esp32Device haspDevice;
