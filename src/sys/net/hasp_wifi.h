@@ -24,10 +24,23 @@ void wifi_get_statusupdate(char* buffer, size_t len);
 void wifi_get_info(JsonDocument& doc);
 const char* wifi_get_ssid();
 const char* wifi_get_ip_address();
+void wifi_run_scripts();
 
 #if HASP_USE_CONFIG > 0
 bool wifiGetConfig(const JsonObject& settings);
 bool wifiSetConfig(const JsonObject& settings);
+#endif
+
+#ifndef WIFI_SSID
+#define WIFI_SSID ""
+#endif
+
+#ifndef WIFI_PASSWORD
+#ifndef WIFI_PASSW
+#define WIFI_PASSWORD "";
+#else
+#define WIFI_PASSWORD WIFI_PASSW;
+#endif
 #endif
 
 #endif

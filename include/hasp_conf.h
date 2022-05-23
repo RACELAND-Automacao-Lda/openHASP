@@ -53,8 +53,12 @@
 #define HASP_HAS_NETWORK                                                                                               \
     (ARDUINO_ARCH_ESP32 > 0 || ARDUINO_ARCH_ESP8266 > 0 || HASP_USE_ETHERNET > 0 || HASP_USE_WIFI > 0)
 
-#ifndef HASP_USE_OTA
-#define HASP_USE_OTA 0 //(HASP_HAS_NETWORK)
+#ifndef HASP_USE_ARDUINOOTA
+#define HASP_USE_ARDUINOOTA 0 //(HASP_HAS_NETWORK)
+#endif
+
+#ifndef HASP_USE_HTTP_UPDATE
+#define HASP_USE_HTTP_UPDATE (HASP_HAS_NETWORK)
 #endif
 
 #ifndef HASP_USE_MQTT
@@ -103,10 +107,6 @@
 
 #ifndef HASP_USE_TELNET
 #define HASP_USE_TELNET 0
-#endif
-
-#ifndef HASP_START_FTP
-#define HASP_START_FTP 1
 #endif
 
 #ifndef HASP_START_TELNET
@@ -303,7 +303,7 @@ static WiFiSpiClass WiFi;
 #include "sys/svc/hasp_mdns.h"
 #endif
 
-#if HASP_USE_OTA > 0
+#if HASP_USE_ARDUINOOTA > 0 || HASP_USE_HTTP_UPDATE > 0
 #include "sys/svc/hasp_ota.h"
 #endif
 

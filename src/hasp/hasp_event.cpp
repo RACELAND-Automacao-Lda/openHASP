@@ -50,6 +50,8 @@ void delete_event_handler(lv_obj_t* obj, lv_event_t event)
 {
     if(event != LV_EVENT_DELETE) return;
 
+    uint8_t part_cnt = LV_OBJ_PART_MAIN;
+
     switch(obj_get_type(obj)) {
         case LV_HASP_LINE:
             my_line_clear_points(obj);
@@ -61,7 +63,7 @@ void delete_event_handler(lv_obj_t* obj, lv_event_t event)
 
         case LV_HASP_MSGBOX:
             my_msgbox_map_clear(obj);
-            break;
+          break;
 
         case LV_HASP_IMAGE:
             my_image_release_resources(obj);
@@ -75,7 +77,14 @@ void delete_event_handler(lv_obj_t* obj, lv_event_t event)
     }
 
     // TODO: delete value_str data for ALL parts
-    my_obj_set_value_str_text(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, NULL);
+    for(uint8_t part = 0; part <= part_cnt; part++) {
+        my_obj_set_value_str_text(obj, part, LV_STATE_DEFAULT, NULL);
+        my_obj_set_value_str_text(obj, part, LV_STATE_CHECKED, NULL);
+        my_obj_set_value_str_text(obj, part, LV_STATE_PRESSED + LV_STATE_DEFAULT, NULL);
+        my_obj_set_value_str_text(obj, part, LV_STATE_PRESSED + LV_STATE_CHECKED, NULL);
+        my_obj_set_value_str_text(obj, part, LV_STATE_DISABLED + LV_STATE_DEFAULT, NULL);
+        my_obj_set_value_str_text(obj, part, LV_STATE_DISABLED + LV_STATE_CHECKED, NULL);
+    }
     my_obj_set_tag(obj, (char*)NULL);
 }
 
@@ -335,12 +344,16 @@ void first_touch_event_handler(lv_obj_t* obj, lv_event_t event)
     //  log_event("wakeup", event);
 
     if(event == LV_EVENT_RELEASED && obj == lv_disp_get_layer_sys(NULL)) {
-        hasp_update_sleep_state(); // wakeup?
+        bool changed = hasp_stop_antiburn(); // Disable antiburn task
+
         if(!haspDevice.get_backlight_power()) {
             dispatch_backlight(NULL, "on", TAG_EVENT); // backlight on and also disable wakeup touch
+        } else {
+            hasp_set_wakeup_touch(false); // only disable wakeup touch
         }
-        hasp_set_wakeup_touch(false); // only disable wakeup touch
-        hasp_set_antiburn(0, 0);      // disable antiburn task
+
+        hasp_update_sleep_state();                                // wakeup, send Idle off
+        if(changed) dispatch_state_antiburn(hasp_get_antiburn()); // publish the new state
     }
 }
 

@@ -5,8 +5,6 @@ on:
     paths-ignore:
       - '**.md'
   workflow_dispatch:
-    paths-ignore:
-      - '**.md'
 
 jobs:
   build_esp32:
@@ -27,7 +25,9 @@ jobs:
           - env: d1-r32-unoshield_ili9486_adc
             out: d1-r32-espduino32
           - env: esp32-one_st7796
-            out: esp32-one
+            out: waveshare
+          - env: esp32-one_ili9486
+            out: waveshare
           - env: esp32-touchdown
             out: esp32-touchdown
           - out: freetouchdeck
@@ -42,8 +42,8 @@ jobs:
             out: m5stack
           - env: makerfabs-tft35-cap
             out: makerfabs-tft
-          - env: ttgo-t7-v1.5_ili9341
-            out: ttgo-t7
+          - out: ttgo
+            env: "ttgo-t7-v1.5_ili9341_4MB -e ttgo-t7-v1.5_ili9341_16MB"
           - out: wireless-tag
             env: "wt32-sc01_4MB -e wt32-sc01_16MB -e wt-86-32-3zw1"
           - env: yeacreate-nscreen32
